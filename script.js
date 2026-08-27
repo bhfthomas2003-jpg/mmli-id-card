@@ -1069,12 +1069,56 @@ async function captureFace(cred, face, bg){
   const cardEl = holder.firstChild;
   // Force layout, then give the browser two animation frames plus a short
   // buffer so fonts/images are fully painted before html2canvas reads pixels.
+  // (The card's decorative animations are frozen to a fixed "resting" frame
+  // via the .export-size CSS rules, so this wait is purely about fonts/images
+  // finishing paint — not about outrunning an in-progress animation.)
   void cardEl.offsetHeight;
   await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
   await new Promise(r => setTimeout(r, 180));
-  const canvas = await html2canvas(cardEl, {scale:2, backgroundColor: bg || null, useCORS:true});
+
+  // html2canvas's default renderer re-implements CSS layout/paint itself,
+  // which silently drops mix-blend-mode (the gold sheen highlight), has
+  // patchy support for filter (logo drop-shadow, the inverted-to-white
+  // signature), and can mis-render repeating/radial gradients (the guilloche
+  // and dot-pattern textures) — this is exactly what makes the downloaded
+  // file look different from the on-screen preview even though it's the
+  // same DOM/CSS. foreignObjectRendering routes the capture through the
+  // browser's own paint engine instead, so it matches the preview pixel for
+  // pixel. It needs every image the card references to be same-origin or a
+  // data: URI (which is true here — logo, photo, signature, and QR are all
+  // embedded as data URLs), so it's safe to use as the primary path, with a
+  // plain-DOM-walk fallback in case a browser mishandles it.
+  const opts = {scale:2, backgroundColor: bg || null, useCORS:true};
+  let canvas;
+  try{
+    canvas = await html2canvas(cardEl, Object.assign({}, opts, {foreignObjectRendering:true}));
+    if(!canvas || !canvas.width || !canvas.height || isCanvasBlank(canvas)){
+      canvas = await html2canvas(cardEl, opts);
+    }
+  }catch(e){
+    canvas = await html2canvas(cardEl, opts);
+  }
   document.body.removeChild(holder);
   return canvas;
+}
+
+// foreignObjectRendering can silently produce a fully transparent/blank
+// canvas in browsers that don't support it well (notably older Safari).
+// Sample a handful of pixels so we can detect that and fall back safely
+// rather than shipping the user a blank download.
+function isCanvasBlank(canvas){
+  try{
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    const samples = [[w*0.1,h*0.1],[w*0.5,h*0.5],[w*0.9,h*0.9],[w*0.25,h*0.75],[w*0.75,h*0.25]];
+    for(const [sx, sy] of samples){
+      const data = ctx.getImageData(Math.max(0,Math.floor(sx)), Math.max(0,Math.floor(sy)), 1, 1).data;
+      if(data[3] !== 0) return false; // found a non-transparent pixel
+    }
+    return true;
+  }catch(e){
+    return false; // if we can't inspect it (e.g. tainted canvas), trust it
+  }
 }
 
 async function exportImage(format){
