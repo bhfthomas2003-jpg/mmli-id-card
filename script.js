@@ -458,17 +458,18 @@ function buildCardBackHtml(cred, cfg, opts){
   const qrUrl = getQrDataUrl(cred.credentialId, qrSize);
   const validThrough = fields.validThrough ? formatDateHuman(fields.validThrough) : 'See event schedule';
   const sig = window.__MMLI.state.settings.signature || '';
-  // The signature is recolored to brand gold via a CSS mask rather than a
-  // filter chain: filters (hue-rotate/saturate/sepia) can only redistribute
-  // color that's already present, and a black-ink-on-transparent signature
-  // has none to redistribute, so they can only ever produce grayscale. A
-  // mask uses the signature's own alpha shape to punch a solid gold fill,
-  // which reproduces the exact strokes in true brand gold regardless of the
-  // source ink color. The original <img> stays in the DOM (invisible) purely
-  // so the wrapper inherits its natural intrinsic size.
+  const sigGold = MMLI_ASSETS.MMLI_SIGNATURE_GOLD || sig;
+  // The signature ships as a second, pre-rendered gold-tinted PNG (same
+  // strokes, alpha-accurate) rather than being recolored live via a CSS
+  // mask or filter. A live filter can't manufacture color that isn't
+  // already in the source ink, and a live CSS mask only renders correctly
+  // through html2canvas's foreignObjectRendering path — plain image tags
+  // work identically everywhere (live preview, default html2canvas,
+  // foreignObjectRendering, print), so this is the most robust option.
   const sigHtml = sig
-    ? `<div class="cc-sig-wrap"><img class="cc-sig-src" src="${sig}" alt="Authorized signature"><span class="cc-sig-gold" style="--sig-url:url('${sig.replace(/'/g,'%27')}')"></span></div>`
+    ? `<div class="cc-sig-wrap"><img class="cc-sig-src" src="${sigGold}" alt="Authorized signature"></div>`
     : `<div class="cc-sig-wrap"></div>`;
+
   return `
     <div class="cc-bg"></div>
     <div class="cc-geo"></div>
