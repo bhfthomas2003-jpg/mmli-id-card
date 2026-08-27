@@ -454,6 +454,11 @@ function ensureGoldSignature(){
     .catch(() => null);
   return goldSignaturePromise;
 }
+function resetGoldSignatureCache(){
+  goldSignatureDataUrl = null;
+  goldSignaturePromise = null;
+  ensureGoldSignature();
+}
 // Warm the cache immediately so it's usually ready before the first export.
 ensureGoldSignature();
 
@@ -566,6 +571,8 @@ function buildCardEl(cred, face, opts){
 window.__MMLI.getKindLabel = getKindLabel;
 window.__MMLI.effectiveStatus = effectiveStatus;
 window.__MMLI.buildCardEl = buildCardEl;
+window.__MMLI.ensureGoldSignature = ensureGoldSignature;
+window.__MMLI.resetGoldSignatureCache = resetGoldSignatureCache;
 
 })();
 
@@ -886,7 +893,8 @@ window.__MMLI.parseCsvText = parseCsvText;
 const M = window.__MMLI;
 const { escapeHtml, uid, todayISO, formatDateHuman, toast, openModal, closeModal, askConfirm,
   CREDENTIAL_TYPES, resolveTypeConfig, TYPE_ORDER, state, persist, generateCredentialId, yearFromEventName,
-  getQrDataUrl, buildCardEl, effectiveStatus, getKindLabel, renderCredentialForm, ensureEventsDatalist, parseCsvText } = M;
+  getQrDataUrl, buildCardEl, effectiveStatus, getKindLabel, renderCredentialForm, ensureEventsDatalist, parseCsvText,
+  ensureGoldSignature, resetGoldSignatureCache } = M;
 
 let currentFace = 'front';
 let createFormHandle = null;
@@ -1622,7 +1630,7 @@ document.getElementById('importFileInput').addEventListener('change', (e) => {
         state.events = data.events || [];
         state.settings = Object.assign({}, state.settings, data.settings || {});
         state.counters = data.counters || {};
-        goldSignatureDataUrl = null; goldSignaturePromise = null; ensureGoldSignature();
+        resetGoldSignatureCache();
         persist();
         refreshBrandDisplays();
         renderDashboard();
@@ -1639,7 +1647,7 @@ document.getElementById('clearAllBtn').addEventListener('click', () => {
   askConfirm('Erase all studio data?', 'This deletes every credential, event, and setting stored in this browser. This cannot be undone.', () => {
     state.credentials = []; state.events = []; state.counters = {};
     state.settings = { orgName:"Mind Masters Liberia Initiative", motto:"Unleashing the Genius Within", logoFull:MMLI_ASSETS.MMLI_LOGO_FULL, logoMark:MMLI_ASSETS.MMLI_LOGO_MARK, signature:MMLI_ASSETS.MMLI_SIGNATURE };
-    goldSignatureDataUrl = null; goldSignaturePromise = null; ensureGoldSignature();
+    resetGoldSignatureCache();
     persist();
     refreshBrandDisplays();
     renderDashboard(); renderEventsTable(); ensureEventsDatalist();
