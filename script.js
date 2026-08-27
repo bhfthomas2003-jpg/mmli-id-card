@@ -1051,9 +1051,27 @@ function downloadDataUrl(dataUrl, filename){
 }
 
 async function captureFace(cred, face, bg){
+  // Make sure the brand webfonts are fully loaded before we ever rasterize a card —
+  // exporting too early makes html2canvas fall back to a system font with different
+  // line-height, which is what causes text to visually collide.
+  try{
+    if(document.fonts && document.fonts.ready) await document.fonts.ready;
+    if(document.fonts && document.fonts.load){
+      await Promise.all([
+        document.fonts.load('700 32px "Space Grotesk"'),
+        document.fonts.load('600 16px "Inter"'),
+        document.fonts.load('600 14px "IBM Plex Mono"')
+      ]);
+    }
+  }catch(e){ /* font API not available — proceed anyway */ }
+
   const holder = renderOffscreenCard(cred, face);
-  await new Promise(r => setTimeout(r, 60)); // allow fonts/images to settle
   const cardEl = holder.firstChild;
+  // Force layout, then give the browser two animation frames plus a short
+  // buffer so fonts/images are fully painted before html2canvas reads pixels.
+  void cardEl.offsetHeight;
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  await new Promise(r => setTimeout(r, 180));
   const canvas = await html2canvas(cardEl, {scale:2, backgroundColor: bg || null, useCORS:true});
   document.body.removeChild(holder);
   return canvas;
