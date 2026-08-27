@@ -536,16 +536,7 @@ a{color:inherit;}
 .cc-back-info .row{display:flex;justify-content:space-between;gap:6px;border-bottom:1px solid rgba(255,255,255,.12);padding:2px 0;}
 .cc-sig-block{display:flex;align-items:flex-end;justify-content:space-between;margin-top:9px;padding-top:8px;border-top:1px solid rgba(255,255,255,.14);}
 .cc-sig-wrap{position:relative;display:inline-block;height:26px;}
-.cc-sig-src{height:100%;width:auto;object-fit:contain;display:block;opacity:0;}
-.cc-sig-gold{
-  position:absolute;inset:0;
-  background:linear-gradient(100deg,var(--gold-300),var(--gold-400) 55%,var(--gold-500));
-  -webkit-mask-image:var(--sig-url);mask-image:var(--sig-url);
-  -webkit-mask-size:contain;mask-size:contain;
-  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
-  -webkit-mask-position:center;mask-position:center;
-  opacity:.95;
-}
+.cc-sig-src{height:100%;width:auto;object-fit:contain;display:block;opacity:.95;}
 .cc-sig-caption{font-size:6.5px;letter-spacing:.4px;text-transform:uppercase;opacity:.6;line-height:1.4;text-align:right;}
 .cc-footer-note{font-size:6.3px;opacity:.55;text-align:center;margin-top:8px;letter-spacing:.3px;}
 
@@ -593,7 +584,13 @@ a{color:inherit;}
   transition:none !important;
 }
 .cred-card.export-size{opacity:1;transform:none;}
-.cred-card.export-size .cc-sheen{background-position:120% -20%;}
+/* The sheen is a slow-moving diagonal highlight — attractive in motion, but
+   there's no "resting" frame of it that looks intentional as a still image;
+   freezing it at any fixed position instead renders as a hard, static gold
+   bar cutting across the card, which is what caused exports to look
+   different from (and worse than) the live preview. Hide it entirely for
+   the static export rather than trying to pick a good frame. */
+.cred-card.export-size .cc-sheen{opacity:0;}
 .cred-card.export-size.fam-participant .cc-geo{transform:translate(0,0);}
 .cred-card.export-size.fam-staff::after{background-position:0% 0;}
 .cred-card.export-size.fam-official .cc-geo{transform:rotate(0deg) scale(1.4);}
