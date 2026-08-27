@@ -568,6 +568,27 @@ a{color:inherit;}
 .cred-card.export-size .cc-sig-caption{font-size:10.5px;}
 .cred-card.export-size .cc-footer-note{font-size:10px;}
 
+/* Freeze every animated layer at export time so the rasterized PNG/JPG/PDF
+   always captures the same "settled" look as the live preview, instead of
+   whatever random mid-animation frame happened to be showing when
+   html2canvas grabbed the pixels. Entrance animation is skipped entirely
+   (the offscreen export card should never be mid fade-in), and the
+   decorative infinite loops (sheen sweep, geo drift, gold sweep, guilloche
+   spin, seal turn, QR pulse) are pinned to their natural resting position. */
+.cred-card.export-size,
+.cred-card.export-size *,
+.cred-card.export-size *::before,
+.cred-card.export-size *::after{
+  animation:none !important;
+  transition:none !important;
+}
+.cred-card.export-size{opacity:1;transform:none;}
+.cred-card.export-size .cc-sheen{background-position:120% -20%;}
+.cred-card.export-size.fam-participant .cc-geo{transform:translate(0,0);}
+.cred-card.export-size.fam-staff::after{background-position:0% 0;}
+.cred-card.export-size.fam-official .cc-geo{transform:rotate(0deg) scale(1.4);}
+.cred-card.export-size.fam-official .cc-seal{transform:rotate(0deg);}
+
 /* ============================================================
    PHOTO CROP MODAL
    ============================================================ */
