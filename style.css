@@ -546,12 +546,6 @@ a{color:inherit;}
   -webkit-mask-position:center;mask-position:center;
   opacity:.95;
 }
-/* Exported PNG/JPG/PDF renders go through html2canvas, whose rasterizer
-   doesn't reproduce CSS mask-image reliably — the gold layer above shows up
-   as a solid block instead of the signature's shape. For exports we swap in
-   a pre-tinted plain <img> (the signature's own strokes recolored to gold on
-   a canvas ahead of time) which rasterizes like any normal image. */
-.cc-sig-gold-img{height:100%;width:auto;object-fit:contain;display:block;}
 .cc-sig-caption{font-size:6.5px;letter-spacing:.4px;text-transform:uppercase;opacity:.6;line-height:1.4;text-align:right;}
 .cc-footer-note{font-size:6.3px;opacity:.55;text-align:center;margin-top:8px;letter-spacing:.3px;}
 
@@ -599,12 +593,7 @@ a{color:inherit;}
   transition:none !important;
 }
 .cred-card.export-size{opacity:1;transform:none;}
-/* The sheen is a moving diagonal highlight; any single frozen frame of it
-   (especially the wider/stronger gold band used by the official family)
-   reads as a stray diagonal streak across an otherwise flat card once the
-   animation stops. Static exports look cleanest with it fully hidden rather
-   than pinned to an arbitrary position. */
-.cred-card.export-size .cc-sheen{opacity:0;}
+.cred-card.export-size .cc-sheen{background-position:120% -20%;}
 .cred-card.export-size.fam-participant .cc-geo{transform:translate(0,0);}
 .cred-card.export-size.fam-staff::after{background-position:0% 0;}
 .cred-card.export-size.fam-official .cc-geo{transform:rotate(0deg) scale(1.4);}
