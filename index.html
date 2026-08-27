@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>MMLI Credential Studio</title>
+<meta name="description" content="Official credential card generator for Mind Masters Liberia Initiative.">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app-shell">
+
+  <div class="sidebar-scrim" id="sidebarScrim"></div>
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <img id="sidebarLogo" alt="MMLI logo">
+      <div class="sidebar-brand-text">
+        <span class="title">MMLI Credential Studio</span>
+        <span class="sub">Mind Masters Liberia</span>
+      </div>
+    </div>
+    <nav class="sidebar-nav" id="sidebarNav">
+      <button class="nav-item active" data-view="dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+        Dashboard
+      </button>
+      <button class="nav-item" data-view="create">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M12 18v3"/><circle cx="9" cy="10" r="1.5"/><path d="M13 9h5M13 12h5"/></svg>
+        Create Credential
+      </button>
+      <button class="nav-item" data-view="manage">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        Manage &amp; Search
+      </button>
+      <button class="nav-item" data-view="bulk">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0-12l4 4m-4-4L8 7"/><path d="M4 15v3a2 2 0 002 2h12a2 2 0 002-2v-3"/></svg>
+        Bulk Generate
+      </button>
+      <button class="nav-item" data-view="events">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
+        Events
+      </button>
+      <button class="nav-item" data-view="settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        Settings
+      </button>
+    </nav>
+    <div class="sidebar-foot">Unleashing the Genius Within<br>v1.0 — Local Edition</div>
+  </aside>
+
+  <!-- ============ MAIN COLUMN ============ -->
+  <div class="main-col">
+    <header class="topbar">
+      <div class="flex gap-8" style="align-items:center;">
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+        <div class="topbar-title">
+          <span class="eyebrow" id="topbarEyebrow">Mind Masters Liberia Initiative</span>
+          <span id="topbarTitleText">Dashboard</span>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-gold" data-view="create"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg><span class="full-label">New Credential</span></button>
+      </div>
+    </header>
+
+    <!-- ============ DASHBOARD ============ -->
+    <main class="view" id="view-dashboard">
+      <div class="stat-grid" id="statGrid"></div>
+
+      <div class="section-title">Quick actions</div>
+      <div class="section-sub">Jump straight into the tools you use most.</div>
+      <div class="action-grid">
+        <button class="action-tile" data-view="create">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></div>
+          <div class="t">Create Credential</div>
+          <div class="d">Issue a new academic, staff, or official card.</div>
+        </button>
+        <button class="action-tile" data-view="manage">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></div>
+          <div class="t">Manage Credentials</div>
+          <div class="d">Search, edit, revoke, or reprint any credential.</div>
+        </button>
+        <button class="action-tile" data-view="bulk">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0-12l4 4m-4-4L8 7"/><path d="M4 15v3a2 2 0 002 2h12a2 2 0 002-2v-3"/></svg></div>
+          <div class="t">Bulk Generate</div>
+          <div class="d">Upload a CSV roster to produce many cards at once.</div>
+        </button>
+        <button class="action-tile" data-view="events">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></div>
+          <div class="t">Manage Events</div>
+          <div class="d">Define competitions, programs, and venues to reuse.</div>
+        </button>
+      </div>
+
+      <div class="section-title mt-16" style="margin-top:30px;">Recently issued</div>
+      <div class="section-sub">The last credentials created in this studio.</div>
+      <div class="surface">
+        <div class="table-scroll">
+          <table class="cred-table" id="recentTable">
+            <thead><tr><th>Credential</th><th>Type</th><th>Event</th><th>Status</th><th></th></tr></thead>
+            <tbody id="recentTableBody"></tbody>
+          </table>
+        </div>
+        <div class="empty-state" id="recentEmpty" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M12 18v3"/></svg>
+          <div class="t">No credentials yet</div>
+          <div>Create your first MMLI credential to see it here.</div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ============ CREATE / EDIT ============ -->
+    <main class="view" id="view-create" hidden>
+      <div class="section-title">Choose a credential type</div>
+      <div class="section-sub">The form and card design adapt automatically to your selection.</div>
+      <div class="type-picker" id="typePicker"></div>
+
+      <div class="editor-grid" id="editorGrid" hidden>
+        <div>
+          <form id="credForm" novalidate>
+            <div class="surface surface-pad form-card">
+              <div class="section-title" id="formSectionTitle">Details</div>
+              <div id="formFields"></div>
+            </div>
+            <div class="flex gap-8" style="justify-content:flex-end;flex-wrap:wrap;">
+              <button type="button" class="btn btn-outline" id="cancelFormBtn">Cancel</button>
+              <button type="submit" class="btn btn-primary" id="saveCredBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+                Save Credential
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="preview-col">
+          <div class="preview-face-toggle">
+            <button type="button" class="active" data-face="front">Front</button>
+            <button type="button" data-face="back">Back</button>
+          </div>
+          <div class="preview-stage">
+            <div id="cardPreviewMount"></div>
+          </div>
+          <div class="preview-toolbar">
+            <button class="btn btn-outline btn-sm" id="downloadPngBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l4-4m-4 4l-4-4M4 21h16"/></svg>PNG</button>
+            <button class="btn btn-outline btn-sm" id="downloadJpgBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l4-4m-4 4l-4-4M4 21h16"/></svg>JPG</button>
+            <button class="btn btn-outline btn-sm" id="downloadPdfBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>PDF</button>
+            <button class="btn btn-outline btn-sm" id="printCardBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6z"/></svg>Print</button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ============ MANAGE / SEARCH ============ -->
+    <main class="view" id="view-manage" hidden>
+      <div class="search-bar">
+        <input type="search" id="searchInput" placeholder="Search by name, ID, institution, team, or event…">
+        <button class="btn btn-outline" id="searchClearBtn">Clear</button>
+      </div>
+      <div class="filter-chips" id="filterChips"></div>
+      <div class="surface">
+        <div class="table-scroll">
+          <table class="cred-table">
+            <thead><tr><th>Credential</th><th>Type</th><th>Institution / Org</th><th>Event</th><th>Status</th><th></th></tr></thead>
+            <tbody id="manageTableBody"></tbody>
+          </table>
+        </div>
+        <div class="empty-state" id="manageEmpty" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <div class="t">No credentials found</div>
+          <div>Try a different search term or filter.</div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ============ BULK GENERATE ============ -->
+    <main class="view" id="view-bulk" hidden>
+      <div class="surface surface-pad" style="margin-bottom:20px;">
+        <div class="section-title">Bulk generate from CSV</div>
+        <div class="section-sub">Columns: Name, Institution, Subject, Team, Position, Division, Event. Photos aren't read from CSV — attach them individually after import.</div>
+        <div class="dropzone" id="csvDropzone">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3v12m0-12l4 4m-4-4L8 7"/><path d="M4 15v3a2 2 0 002 2h12a2 2 0 002-2v-3"/></svg>
+          <div><strong>Click to upload</strong> or drag a CSV file here</div>
+          <input type="file" id="csvFileInput" accept=".csv" hidden>
+        </div>
+        <div class="flex gap-8 mt-16">
+          <button class="btn btn-outline btn-sm" id="downloadCsvTemplateBtn">Download CSV template</button>
+        </div>
+      </div>
+
+      <div id="bulkResultsWrap" hidden>
+        <div class="flex" style="justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:10px;">
+          <div class="section-title" style="margin:0;">Preview — <span id="bulkCount">0</span> rows</div>
+          <div class="flex gap-8">
+            <button class="btn btn-outline btn-sm" id="bulkCancelBtn">Cancel</button>
+            <button class="btn btn-primary btn-sm" id="bulkGenerateBtn">Generate All Credentials</button>
+          </div>
+        </div>
+        <div class="bulk-preview-grid" id="bulkPreviewGrid"></div>
+      </div>
+    </main>
+
+    <!-- ============ EVENTS ============ -->
+    <main class="view" id="view-events" hidden>
+      <div class="surface surface-pad" style="margin-bottom:20px;">
+        <div class="section-title">Define an event or program</div>
+        <div class="section-sub">Reuse this studio across competitions, camps, and workshops.</div>
+        <div class="field-row">
+          <div class="field"><label>Event Name</label><input type="text" id="evName" placeholder="e.g. National Mathematics Championship"></div>
+          <div class="field"><label>Event Year</label><input type="text" id="evYear" placeholder="2026"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Start Date</label><input type="date" id="evStart"></div>
+          <div class="field"><label>End Date</label><input type="date" id="evEnd"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Venue</label><input type="text" id="evVenue" placeholder="e.g. University of Liberia, Monrovia"></div>
+          <div class="field"><label>Organization</label><input type="text" id="evOrg" placeholder="Mind Masters Liberia Initiative"></div>
+        </div>
+        <button class="btn btn-primary" id="saveEventBtn">Add Event</button>
+      </div>
+      <div class="section-title">Saved events</div>
+      <div class="surface">
+        <div class="table-scroll">
+          <table class="cred-table">
+            <thead><tr><th>Event</th><th>Year</th><th>Venue</th><th>Dates</th><th></th></tr></thead>
+            <tbody id="eventsTableBody"></tbody>
+          </table>
+        </div>
+        <div class="empty-state" id="eventsEmpty" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
+          <div class="t">No events yet</div>
+          <div>Add your first event above — it'll appear as a quick-pick when creating credentials.</div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ============ SETTINGS ============ -->
+    <main class="view" id="view-settings" hidden>
+      <div class="settings-grid">
+        <div class="surface surface-pad">
+          <div class="section-title">Organization branding</div>
+          <div class="section-sub">Shown on every credential and in the studio header.</div>
+          <div class="logo-current">
+            <img id="settingsLogoPreview" alt="Current logo">
+            <div>
+              <button class="btn btn-outline btn-sm" id="uploadLogoBtn">Upload new logo</button>
+              <button class="btn btn-ghost btn-sm" id="resetLogoBtn">Reset to default</button>
+              <input type="file" id="logoFileInput" accept="image/png,image/jpeg,image/webp" hidden>
+            </div>
+          </div>
+          <div class="field"><label>Organization name</label><input type="text" id="orgNameInput" value="Mind Masters Liberia Initiative"></div>
+          <div class="field"><label>Motto</label><input type="text" id="orgMottoInput" value="Unleashing the Genius Within"></div>
+          <button class="btn btn-primary" id="saveBrandingBtn">Save Branding</button>
+        </div>
+
+        <div class="surface surface-pad">
+          <div class="section-title">Data</div>
+          <div class="section-sub">Everything is stored locally in this browser (localStorage).</div>
+          <p style="font-size:12.5px;color:var(--ink-soft);line-height:1.6;">Credentials, events, and settings persist on this device only. Export a backup before clearing browser data.</p>
+          <div class="flex gap-8" style="flex-wrap:wrap;">
+            <button class="btn btn-outline btn-sm" id="exportDataBtn">Export backup (JSON)</button>
+            <button class="btn btn-outline btn-sm" id="importDataBtn">Import backup</button>
+            <input type="file" id="importFileInput" accept="application/json" hidden>
+          </div>
+          <hr style="border:none;border-top:1px solid var(--line);margin:18px 0;">
+          <button class="btn btn-danger btn-sm" id="clearAllBtn">Erase all studio data</button>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ============ PHOTO CROP MODAL ============ -->
+<div class="modal-overlay" id="cropModal" hidden>
+  <div class="modal">
+    <div class="modal-head"><h3>Position photo</h3><button class="modal-close" data-close-modal="cropModal">✕</button></div>
+    <div class="modal-body">
+      <div class="crop-stage" id="cropStage"><canvas id="cropCanvas"></canvas></div>
+      <div class="crop-controls">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input type="range" id="cropZoom" min="100" max="300" value="100">
+      </div>
+      <p style="text-align:center;font-size:12px;color:var(--ink-soft);margin-top:10px;">Drag to reposition • Use the slider to zoom</p>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" data-close-modal="cropModal">Cancel</button>
+      <button class="btn btn-primary" id="applyCropBtn">Use Photo</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ VERIFY MODAL ============ -->
+<div class="modal-overlay" id="verifyModal" hidden>
+  <div class="modal">
+    <div class="modal-head"><h3>MMLI Credential Verification</h3><button class="modal-close" data-close-modal="verifyModal">✕</button></div>
+    <div class="modal-body" id="verifyModalBody"></div>
+    <div class="modal-foot"><button class="btn btn-outline" data-close-modal="verifyModal">Close</button></div>
+  </div>
+</div>
+
+<!-- ============ CONFIRM MODAL ============ -->
+<div class="modal-overlay" id="confirmModal" hidden>
+  <div class="modal" style="max-width:420px;">
+    <div class="modal-head"><h3 id="confirmTitle">Are you sure?</h3><button class="modal-close" data-close-modal="confirmModal">✕</button></div>
+    <div class="modal-body"><p id="confirmBody" style="font-size:13.5px;color:var(--ink-soft);line-height:1.6;"></p></div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" data-close-modal="confirmModal">Cancel</button>
+      <button class="btn btn-danger" id="confirmActionBtn">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ EDIT CREDENTIAL MODAL (reuses create form fields) ============ -->
+<div class="modal-overlay" id="editModal" hidden>
+  <div class="modal modal-lg">
+    <div class="modal-head"><h3>Edit Credential</h3><button class="modal-close" data-close-modal="editModal">✕</button></div>
+    <div class="modal-body">
+      <div class="editor-grid">
+        <div id="editFormFields"></div>
+        <div class="preview-col">
+          <div class="preview-stage"><div id="editCardPreviewMount"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" data-close-modal="editModal">Cancel</button>
+      <button class="btn btn-primary" id="saveEditBtn">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-stack" id="toastStack"></div>
+
+<!-- CDN libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script src="assets.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
