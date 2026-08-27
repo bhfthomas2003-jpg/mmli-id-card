@@ -457,6 +457,18 @@ function buildCardBackHtml(cred, cfg, opts){
   const qrSize = opts.exportMode ? 320 : 150;
   const qrUrl = getQrDataUrl(cred.credentialId, qrSize);
   const validThrough = fields.validThrough ? formatDateHuman(fields.validThrough) : 'See event schedule';
+  const sig = window.__MMLI.state.settings.signature || '';
+  // The signature is recolored to brand gold via a CSS mask rather than a
+  // filter chain: filters (hue-rotate/saturate/sepia) can only redistribute
+  // color that's already present, and a black-ink-on-transparent signature
+  // has none to redistribute, so they can only ever produce grayscale. A
+  // mask uses the signature's own alpha shape to punch a solid gold fill,
+  // which reproduces the exact strokes in true brand gold regardless of the
+  // source ink color. The original <img> stays in the DOM (invisible) purely
+  // so the wrapper inherits its natural intrinsic size.
+  const sigHtml = sig
+    ? `<div class="cc-sig-wrap"><img class="cc-sig-src" src="${sig}" alt="Authorized signature"><span class="cc-sig-gold" style="--sig-url:url('${sig.replace(/'/g,'%27')}')"></span></div>`
+    : `<div class="cc-sig-wrap"></div>`;
   return `
     <div class="cc-bg"></div>
     <div class="cc-geo"></div>
@@ -479,7 +491,7 @@ function buildCardBackHtml(cred, cfg, opts){
         </div>
       </div>
       <div class="cc-sig-block">
-        <img src="${window.__MMLI.state.settings.signature || ''}" alt="Authorized signature">
+        ${sigHtml}
         <div class="cc-sig-caption">Authorized Signature<br>MMLI Executive Office</div>
       </div>
       <div class="cc-footer-note">Property of Mind Masters Liberia Initiative — mmli.org.lr (placeholder)</div>
