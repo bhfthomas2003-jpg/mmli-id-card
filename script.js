@@ -404,6 +404,59 @@ function orgLogoImg(){
   return state.settings.logoMark || state.settings.logoFull || '';
 }
 
+/* ------------------------------------------------------------
+   Gold-tinted signature (export-safe)
+   The on-screen preview recolors the signature to brand gold with a CSS
+   mask (see .cc-sig-gold), which renders perfectly in a live browser tab.
+   html2canvas's rasterizer, however, doesn't reproduce mask-image
+   reliably, so the exported PNG/JPG/PDF ends up showing a solid gold
+   block instead of the signature's shape. To keep exports looking right,
+   we pre-render the same gold-on-transparent signature onto an offscreen
+   canvas once (using source-in compositing, which is just pixel
+   compositing and rasterizes fine) and cache the resulting plain <img>
+   data URL for exportMode to use instead of the mask.
+   ------------------------------------------------------------ */
+let goldSignatureDataUrl = null;
+let goldSignaturePromise = null;
+
+function tintImageDataUrlGold(dataUrl){
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      try{
+        const canvas = document.createElement('canvas');
+        canvas.width = img.naturalWidth || img.width;
+        canvas.height = img.naturalHeight || img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        ctx.globalCompositeOperation = 'source-in';
+        const grad = ctx.createLinearGradient(0, 0, canvas.width, 0);
+        grad.addColorStop(0, '#ffdf94');   // --gold-300
+        grad.addColorStop(0.55, '#f4c860'); // --gold-400
+        grad.addColorStop(1, '#e8a93b');   // --gold-500
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL('image/png'));
+      }catch(e){ reject(e); }
+    };
+    img.onerror = reject;
+    img.src = dataUrl;
+  });
+}
+
+function ensureGoldSignature(){
+  const sig = window.__MMLI.state.settings.signature;
+  if(!sig) return Promise.resolve(null);
+  if(goldSignatureDataUrl) return Promise.resolve(goldSignatureDataUrl);
+  if(goldSignaturePromise) return goldSignaturePromise;
+  goldSignaturePromise = tintImageDataUrlGold(sig)
+    .then(url => { goldSignatureDataUrl = url; return url; })
+    .catch(() => null);
+  return goldSignaturePromise;
+}
+// Warm the cache immediately so it's usually ready before the first export.
+ensureGoldSignature();
+
 function buildCardFrontHtml(cred, cfg, opts){
   opts = opts || {};
   const fields = cred.fields;
@@ -467,7 +520,9 @@ function buildCardBackHtml(cred, cfg, opts){
   // source ink color. The original <img> stays in the DOM (invisible) purely
   // so the wrapper inherits its natural intrinsic size.
   const sigHtml = sig
-    ? `<div class="cc-sig-wrap"><img class="cc-sig-src" src="${sig}" alt="Authorized signature"><span class="cc-sig-gold" style="--sig-url:url('${sig.replace(/'/g,'%27')}')"></span></div>`
+    ? (opts.exportMode && goldSignatureDataUrl
+        ? `<div class="cc-sig-wrap"><img class="cc-sig-gold-img" src="${goldSignatureDataUrl}" alt="Authorized signature"></div>`
+        : `<div class="cc-sig-wrap"><img class="cc-sig-src" src="${sig}" alt="Authorized signature"><span class="cc-sig-gold" style="--sig-url:url('${sig.replace(/'/g,'%27')}')"></span></div>`)
     : `<div class="cc-sig-wrap"></div>`;
   return `
     <div class="cc-bg"></div>
@@ -1063,6 +1118,11 @@ function downloadDataUrl(dataUrl, filename){
 }
 
 async function captureFace(cred, face, bg){
+  // Make sure the export-safe gold signature image (see ensureGoldSignature)
+  // has finished rendering before we build the offscreen card — otherwise
+  // buildCardBackHtml would fall back to the mask version, which is exactly
+  // what breaks under html2canvas.
+  await ensureGoldSignature();
   // Make sure the brand webfonts are fully loaded before we ever rasterize a card —
   // exporting too early makes html2canvas fall back to a system font with different
   // line-height, which is what causes text to visually collide.
@@ -1562,6 +1622,7 @@ document.getElementById('importFileInput').addEventListener('change', (e) => {
         state.events = data.events || [];
         state.settings = Object.assign({}, state.settings, data.settings || {});
         state.counters = data.counters || {};
+        goldSignatureDataUrl = null; goldSignaturePromise = null; ensureGoldSignature();
         persist();
         refreshBrandDisplays();
         renderDashboard();
@@ -1578,6 +1639,7 @@ document.getElementById('clearAllBtn').addEventListener('click', () => {
   askConfirm('Erase all studio data?', 'This deletes every credential, event, and setting stored in this browser. This cannot be undone.', () => {
     state.credentials = []; state.events = []; state.counters = {};
     state.settings = { orgName:"Mind Masters Liberia Initiative", motto:"Unleashing the Genius Within", logoFull:MMLI_ASSETS.MMLI_LOGO_FULL, logoMark:MMLI_ASSETS.MMLI_LOGO_MARK, signature:MMLI_ASSETS.MMLI_SIGNATURE };
+    goldSignatureDataUrl = null; goldSignaturePromise = null; ensureGoldSignature();
     persist();
     refreshBrandDisplays();
     renderDashboard(); renderEventsTable(); ensureEventsDatalist();
